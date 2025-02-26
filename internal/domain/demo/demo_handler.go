@@ -1,8 +1,6 @@
-package handler
+package demo
 
 import (
-	"golang_sample/internal/demo/model"
-	"golang_sample/internal/demo/service"
 	"net/http"
 	"strconv"
 
@@ -10,15 +8,15 @@ import (
 )
 
 type DemoHandler struct {
-	demoService service.DemoService
+	demoService Service
 }
 
-func NewDemoHandler(s service.DemoService) *DemoHandler {
+func NewDemoHandler(s Service) *DemoHandler {
 	return &DemoHandler{demoService: s}
 }
 
 func (h *DemoHandler) CreateDemo(c *gin.Context) {
-	var demo model.Demo
+	var demo Demo
 	if err := c.ShouldBindJSON(&demo); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -63,7 +61,7 @@ func (h *DemoHandler) UpdateDemo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-	var demo model.Demo
+	var demo Demo
 	if err := c.ShouldBindJSON(&demo); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

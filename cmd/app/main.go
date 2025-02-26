@@ -1,40 +1,36 @@
 package main
 
 import (
+	demo2 "golang_sample/internal/domain/demo"
 	"log"
 
-	"golang_sample/internal/demo"
-	"golang_sample/internal/demo/handler"
-	"golang_sample/internal/demo/model"
-	"golang_sample/internal/demo/repository"
-	"golang_sample/internal/demo/service"
-
 	"github.com/gin-gonic/gin"
+	"golang_sample/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func main() {
-	dsn := "host=localhost user=postgres password=postgres dbname=demo port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	cfg := config.Load()
+
+	db, err := gorm.Open(postgres.Open(cfg.DSN), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
-	if err := db.AutoMigrate(&model.Demo{}); err != nil {
+	if err := db.AutoMigrate(&demo2.Demo{}); err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 
-	demoRepo := repository.NewDemoRepository(db)
-	demoService := service.NewDemoService(demoRepo)
-	demoHandler := handler.NewDemoHandler(demoService)
+	demoRepo := demo2.NewDemoRepository(db)
+	demoService := demo2.NewDemoService(demoRepo.Repository)
+	demoHandler := demo2.NewDemoHandler(demoService)
 
 	r := gin.Default()
-
 	api := r.Group("/api")
 	{
-		demo.RegisterRoutes(api, demoHandler)
+		demo2.RegisterRoutes(api, demoHandler)
 	}
 
-	r.Run(":8080")
+	r.Run(cfg.Port)
 }

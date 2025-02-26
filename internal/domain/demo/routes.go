@@ -2,10 +2,9 @@ package demo
 
 import (
 	"github.com/gin-gonic/gin"
-	"golang_sample/internal/demo/handler"
 )
 
-func RegisterRoutes(rg *gin.RouterGroup, h *handler.DemoHandler) {
+func RegisterRoutes(rg *gin.RouterGroup, h *DemoHandler) {
 	demoRoutes := rg.Group("/demos")
 	{
 		demoRoutes.POST("/", h.CreateDemo)
