@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(rg *gin.RouterGroup, h *DemoHandler) {
+func RegisterRoutes(rg *gin.RouterGroup, h *Handler) {
 	demoRoutes := rg.Group("/demos")
 	{
 		demoRoutes.POST("/", h.CreateDemo)

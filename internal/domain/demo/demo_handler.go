@@ -7,15 +7,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type DemoHandler struct {
+type Handler struct {
 	demoService Service
 }
 
-func NewDemoHandler(s Service) *DemoHandler {
-	return &DemoHandler{demoService: s}
+func NewDemoHandler(s Service) *Handler {
+	return &Handler{demoService: s}
 }
 
-func (h *DemoHandler) CreateDemo(c *gin.Context) {
+// CreateDemo godoc
+// @Summary Create a new Demo
+// @Description Create a new demo entry
+// @Tags demos
+// @Accept json
+// @Produce json
+// @Param demo body Demo true "Demo to create"
+// @Success 201 {object} Demo
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /demos/ [post]
+func (h *Handler) CreateDemo(c *gin.Context) {
 	var demo Demo
 	if err := c.ShouldBindJSON(&demo); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -28,7 +39,17 @@ func (h *DemoHandler) CreateDemo(c *gin.Context) {
 	c.JSON(http.StatusCreated, demo)
 }
 
-func (h *DemoHandler) GetDemo(c *gin.Context) {
+// GetDemo godoc
+// @Summary Get a Demo by ID
+// @Description Get details of a demo entry by ID
+// @Tags demos
+// @Produce json
+// @Param id path int true "Demo ID"
+// @Success 200 {object} Demo
+// @Failure 400 {object} gin.H
+// @Failure 404 {object} gin.H
+// @Router /demos/{id} [get]
+func (h *Handler) GetDemo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
@@ -46,7 +67,15 @@ func (h *DemoHandler) GetDemo(c *gin.Context) {
 	c.JSON(http.StatusOK, demo)
 }
 
-func (h *DemoHandler) GetAllDemos(c *gin.Context) {
+// GetAllDemos godoc
+// @Summary Get all Demos
+// @Description Retrieve all demo entries
+// @Tags demos
+// @Produce json
+// @Success 200 {array} Demo
+// @Failure 500 {object} gin.H
+// @Router /demos/ [get]
+func (h *Handler) GetAllDemos(c *gin.Context) {
 	demos, err := h.demoService.GetAllDemos()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -55,7 +84,19 @@ func (h *DemoHandler) GetAllDemos(c *gin.Context) {
 	c.JSON(http.StatusOK, demos)
 }
 
-func (h *DemoHandler) UpdateDemo(c *gin.Context) {
+// UpdateDemo godoc
+// @Summary Update an existing Demo
+// @Description Update a demo entry by ID
+// @Tags demos
+// @Accept json
+// @Produce json
+// @Param id path int true "Demo ID"
+// @Param demo body Demo true "Updated demo"
+// @Success 200 {object} Demo
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /demos/{id} [put]
+func (h *Handler) UpdateDemo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
@@ -74,7 +115,17 @@ func (h *DemoHandler) UpdateDemo(c *gin.Context) {
 	c.JSON(http.StatusOK, demo)
 }
 
-func (h *DemoHandler) DeleteDemo(c *gin.Context) {
+// DeleteDemo godoc
+// @Summary Delete a Demo
+// @Description Delete a demo entry by ID
+// @Tags demos
+// @Produce json
+// @Param id path int true "Demo ID"
+// @Success 200 {object} gin.H
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /demos/{id} [delete]
+func (h *Handler) DeleteDemo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
