@@ -29,7 +29,7 @@ func NewDemoHandler(s Service) *Handler {
 func (h *Handler) CreateDemo(c *gin.Context) {
 	var demo Demo
 	if err := c.ShouldBindJSON(&demo); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Body does not contain valid demo"})
 		return
 	}
 	if err := h.demoService.CreateDemo(&demo); err != nil {

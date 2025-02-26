@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "golang_sample/docs"
 	"golang_sample/internal/config"
-	demo2 "golang_sample/internal/domain/demo"
+	"golang_sample/internal/domain/demo"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -30,13 +30,13 @@ func main() {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
-	if err := db.AutoMigrate(&demo2.Demo{}); err != nil {
+	if err := db.AutoMigrate(&demo.Demo{}); err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}
 
-	demoRepo := demo2.NewDemoRepository(db)
-	demoService := demo2.NewDemoService(demoRepo.Repository)
-	demoHandler := demo2.NewDemoHandler(demoService)
+	demoRepo := demo.NewDemoRepository(db)
+	demoService := demo.NewDemoService(demoRepo.Repository)
+	demoHandler := demo.NewDemoHandler(demoService)
 
 	r := gin.Default()
 
@@ -46,7 +46,7 @@ func main() {
 
 	api := r.Group("/api")
 	{
-		demo2.RegisterRoutes(api, demoHandler)
+		demo.RegisterRoutes(api, demoHandler)
 	}
 
 	r.Run(cfg.Port)
