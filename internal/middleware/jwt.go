@@ -41,11 +41,11 @@ func JWTAuthMiddleware(jwtSecret string) gin.HandlerFunc {
 			return
 		}
 
-		// Optionally, set user_id in the context if present
+		// Set user_id in the context if present
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			c.Set("user_id", claims["user_id"])
 		}
 
 		c.Next()
 	}
-} 
+}

@@ -1,4 +1,4 @@
-package user
+package authentication
 
 import (
 	"net/http"
@@ -10,24 +10,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Handler handles user authentication endpoints.
 type Handler struct {
 	Repo      *Repository
 	JWTSecret string
 }
 
-// NewUserHandler creates a new user handler with the given repository and JWT secret.
 func NewUserHandler(repo *Repository, jwtSecret string) *Handler {
 	return &Handler{Repo: repo, JWTSecret: jwtSecret}
 }
 
-// RegisterRequest represents the expected payload for registration.
 type RegisterRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-// Register registers a new user. It hashes the password before saving.
 func (h *Handler) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -49,7 +45,6 @@ func (h *Handler) Register(c *gin.Context) {
 	}
 
 	if err := h.Repo.CreateUser(user); err != nil {
-		// Check for duplicate email error
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Email already exists"})
 			return
@@ -61,13 +56,11 @@ func (h *Handler) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }
 
-// LoginRequest represents the expected payload for login.
 type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-// Login authenticates a user and returns a JWT token if successful.
 func (h *Handler) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -100,5 +93,3 @@ func (h *Handler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"token": tokenString})
 }
-
- 

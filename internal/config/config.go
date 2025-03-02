@@ -7,8 +7,6 @@ import (
 )
 
 // Config holds the application configuration
-// Now includes JWTSecret for JWT authentication
-
 type Config struct {
 	DSN       string
 	Port      string
@@ -16,13 +14,12 @@ type Config struct {
 	JWTSecret string
 }
 
-// Load reads configuration from environment variables or sets defaults
 func Load() Config {
 	_ = godotenv.Load()
 
 	dsn := os.Getenv("DATABASE_DSN")
 	if dsn == "" {
-		dsn = "host=localhost user=postgres password=postgres dbname=demo port=5432 sslmode=disable"
+		dsn = "host=localhost authentication=postgres password=postgres dbname=demo port=5432 sslmode=disable"
 	}
 
 	port := os.Getenv("APP_PORT")
